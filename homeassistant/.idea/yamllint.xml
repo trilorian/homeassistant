@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="YamllintSettings">
+    <enabled>true</enabled>
+    <binPath>/usr/bin/yamllint</binPath>
+    <disabledRules>
+      <set>
+        <option value="line-length" />
+        <option value="new-line-at-end-of-file" />
+        <option value="trailing-spaces" />
+      </set>
+    </disabledRules>
+  </component>
+</project>
