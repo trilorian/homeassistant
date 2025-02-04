@@ -1,1 +1,2 @@
-# homeassistent
+# Blueprints
+Automation blueprints for Home Automation
