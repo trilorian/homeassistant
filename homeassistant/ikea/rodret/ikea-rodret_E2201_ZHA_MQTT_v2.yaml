@@ -16,7 +16,7 @@ blueprint:
     - Triple click the **on** or **off** button
 
     - Click and hold the **on**/**off** button"
-  source_url: https://gist.github.com/trilorian/e365d49c009e56ef9062f66f472200f8
+  source_url: https://gist.github.com/trilorian/f50e3ad83afc48d3cde6874cf196201a
   domain: automation
   input:
     remote_device:
@@ -128,7 +128,7 @@ max_exceeded: silent
 trigger_variables:
   zha_remote: !input remote_device
   z2m_base_topic: !input base_topic
-  z2m_controller: !input remote_name
+  z2m_controller: !input remote_device
 triggers:
   - trigger: event
     event_type: zha_event
@@ -178,7 +178,6 @@ triggers:
       cluster_id: 8
       endpoint_id: 1
     id: release-zha
-trigger:
   - platform: mqtt
     topic: "{{ z2m_base_topic ~ '/' ~ z2m_controller ~ '/action' }}"
     payload: "on"
