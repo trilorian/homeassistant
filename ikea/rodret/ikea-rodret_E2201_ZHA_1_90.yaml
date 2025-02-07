@@ -1,22 +1,21 @@
----
 blueprint:
-  name: IKEA Rodret Dimmer (v2 ZHA + MQTT)
-  description: "## IKEA RODRET Dimmer remote (v2.0)
+  name: IKEA Rodret Dimmer
+  description: "## IKEA RODRET Dimmer remote (v1.90)
 
-    For use with [Zigbee Home Automation](https://www.home-assistant.io/integrations/zha/)
-    and Zigbee2MQTT [MQTT](https://www.home-assistant.io/integrations/mqtt/) +
-    [Z2M addon](https://www.zigbee2mqtt.io/guide/installation/03_ha_addon.html)
+    Only for use with [ZHA](https://www.home-assistant.io/integrations/zha/)
 
-    Available controls (optional):
+    Available controls:
 
-    - Click the **on** or **off** button
+    - Click the **on** or **off** buttons
 
-    - Double click the **on** or **off** button
+    - Double click the **on** or **off** buttons (optional)
 
-    - Triple click the **on** or **off** button
+    - Triple click the **on** or **off** buttons (optional)
 
-    - Click and hold the **on**/**off** button"
-  source_url: https://gist.github.com/trilorian/f50e3ad83afc48d3cde6874cf196201a
+    - Quadruple click the **on** or **off** buttons (optional)
+
+    - Click and hold the **on**/**off** buttons (optional)"
+  source_url: https://gist.github.com/trilorian/9ab79ba93afe09e370bb155b548f7b50
   domain: automation
   input:
     remote_device:
@@ -30,11 +29,6 @@ blueprint:
               manufacturer: IKEA of Sweden
               model: RODRET Dimmer
           multiple: false
-    base_topic:
-      name: Base mqtt topic
-      description:
-        The topic configured in [Z2M addon](https://www.zigbee2mqtt.io/guide/usage/mqtt_topics_and_messages.html).
-      default: zigbee2mqtt
     on_click_action:
       name: On - Single click action
       description: Choose action(s) to run when **on** button is clicked.
@@ -48,52 +42,62 @@ blueprint:
       selector:
         action: {}
     on_double_click_action:
-      name: On - Double click action
-      description:
-        Choose action(s) to run when clicking the **on** button twice.
+      name: On - Double click action (Optional)
+      description: Choose action(s) to run when clicking the **on** button twice.
       default: []
       selector:
         action: {}
     on_triple_click_action:
-      name: On - Triple click action
-      description:
-        Choose action(s) to run when clicking the **on** button three times.
+      name: On - Triple click action (Optional)
+      description: Choose action(s) to run when clicking the **on** button three times.
+      default: []
+      selector:
+        action: {}
+    on_quadruple_click_action:
+      name: On - Quadruple click action (Optional)
+      description: Choose action(s) to run when clicking the **on** button four times.
       default: []
       selector:
         action: {}
     off_double_click_action:
-      name: Off - Double click action
-      description:
-        Choose action(s) to run when clicking the **off** button twice.
+      name: Off - Double click action (Optional)
+      description: Choose action(s) to run when clicking the **off** button twice.
       default: []
       selector:
         action: {}
     off_triple_click_action:
-      name: Off - Triple click action
+      name: Off - Triple click action (Optional)
       description:
         Choose action(s) to run when clicking the **off** button three
         times.
       default: []
       selector:
         action: {}
+    off_quadruple_click_action:
+      name: Off - Quadruple click action (Optional)
+      description: Choose action(s) to run when clicking the **off** button four
+        times.
+      default: []
+      selector:
+        action: {}
     on_hold_action:
-      name: On - Hold action
-      description:
-        Choose action(s) to run when **on** button is **clicked and held**.
+      name: On - Hold action (Optional)
+      description: Choose action(s) to run when **on** button is **clicked and held**.
       default: []
       selector:
         action: {}
     off_hold_action:
-      name: Off - Hold action
-      description:
-        Choose action(s) to run when **off** button is **clicked and held**.
+      name: Off - Hold action (Optional)
+      description: Choose action(s) to run when **off** button is **clicked and held**.
       default: []
       selector:
         action: {}
     helper_multi_click_delay:
       name: Helper - Multi click delay
       description:
-        Max delay between the button clicks for the **Multi click events**. Change this value if you notice that the multi click action is not triggered properly.
+        Max delay between the button clicks for the **Multi click events**.
+        Change this value if you notice that the multi click action is not triggered
+        properly.
       default: 250
       selector:
         number:
@@ -127,8 +131,6 @@ mode: single
 max_exceeded: silent
 trigger_variables:
   zha_remote: !input remote_device
-  z2m_base_topic: !input base_topic
-  z2m_controller: !input remote_device
 triggers:
   - trigger: event
     event_type: zha_event
@@ -178,42 +180,6 @@ triggers:
       cluster_id: 8
       endpoint_id: 1
     id: release-zha
-  - platform: mqtt
-    topic: "{{ z2m_base_topic ~ '/' ~ z2m_controller ~ '/action' }}"
-    payload: "on"
-    id: click-on-mqtt
-  - platform: mqtt
-    topic: "{{ z2m_base_topic ~ '/' ~ z2m_controller ~ '/action' }}"
-    payload: "off"
-    id: click-off-mqtt
-  - platform: mqtt
-    topic: "{{ z2m_base_topic ~ '/' ~ z2m_controller ~ '/action' }}"
-    payload: "brightness_move_up"
-    id: hold-on-mqtt
-  - platform: mqtt
-    topic: "{{ z2m_base_topic ~ '/' ~ z2m_controller ~ '/action' }}"
-    payload: "brightness_move_down"
-    id: hold-off-mqtt
-  - platform: mqtt
-    topic: "{{ z2m_base_topic ~ '/' ~ z2m_controller ~ '/action' }}"
-    payload: "brightness_stop"
-    id: release-mqtt
-  - platform: mqtt
-    topic: "{{ z2m_base_topic ~ '/' ~ z2m_controller ~ '/action' }}"
-    payload: "brightness_step_up"
-    id: double-click-on-mqtt
-  - platform: mqtt
-    topic: "{{ z2m_base_topic ~ '/' ~ z2m_controller ~ '/action' }}"
-    payload: "brightness_step_down"
-    id: double-click-off-mqtt
-  - platform: mqtt
-    topic: "{{ z2m_base_topic ~ '/' ~ z2m_controller ~ '/action' }}"
-    payload: "brightness_step_up"
-    id: triple-click-on-mqtt
-  - platform: mqtt
-    topic: "{{ z2m_base_topic ~ '/' ~ z2m_controller ~ '/action' }}"
-    payload: "brightness_step_down"
-    id: triple-click-off-mqtt
 action:
   - choose:
       - conditions:
@@ -235,7 +201,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ wait.trigger == none and on_click_action != none }}"
+                    value_template: "{{ wait.trigger == none }}"
                 sequence: !input on_click_action
             default:
               - wait_for_trigger:
@@ -252,21 +218,37 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ wait.trigger == none }}"
-                    sequence:
-                      - choose:
-                          - conditions:
-                              - condition: template
-                                value_template:
-                                  "{{ on_double_click_action != none }}"
-                            sequence: !input on_double_click_action
+                        value_template: "{{ wait.trigger == none and on_double_click_action != none}}"
+                    sequence: !input on_double_click_action
                 default:
+                  - wait_for_trigger:
+                      - trigger: event
+                        event_type: zha_event
+                        event_data:
+                          device_id: "{{ zha_remote }}"
+                          command: "on"
+                          cluster_id: 6
+                          endpoint_id: 1
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template:
-                              "{{ on_triple_click_action != none }}"
+                            value_template: "{{ wait.trigger == none and on_triple_click_action != none }}"
                         sequence: !input on_triple_click_action
+                    default:
+                      - wait_for_trigger:
+                          - trigger: event
+                            event_type: zha_event
+                            event_data:
+                              device_id: "{{ zha_remote }}"
+                              command: "on"
+                              cluster_id: 6
+                              endpoint_id: 1
+                      - choose:
+                          - conditions:
+                              - condition: template
+                                value_template: "{{ on_triple_click_action != none }}"
+                            sequence: !input on_quadruple_click_action
+                        default: !input on_click_action
   - choose:
       - conditions:
           - condition: trigger
@@ -287,7 +269,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ wait.trigger == none and off_click_action != none }}"
+                    value_template: "{{ wait.trigger == none }}"
                 sequence: !input off_click_action
             default:
               - wait_for_trigger:
@@ -311,13 +293,14 @@ action:
                               - condition: template
                                 value_template: "{{ off_double_click_action != none }}"
                             sequence: !input off_double_click_action
+                        default: !input off_click_action
                 default:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template:
-                              "{{ off_triple_click_action != none }}"
+                            value_template: "{{ off_triple_click_action != none }}"
                         sequence: !input off_triple_click_action
+                    default: !input off_click_action
       - conditions:
           - condition: trigger
             id:
@@ -384,65 +367,3 @@ action:
                                       value_template: "{{ wait.trigger.idx is defined }}"
                                   then:
                                     - stop: button released
-  - choose:
-      - conditions:
-          - condition: trigger
-            id: click-on
-        sequence: !input on_click_action
-      - conditions:
-          - condition: trigger
-            id: click-off
-        sequence: !input off_click_action
-      - conditions:
-          - condition: trigger
-            id: hold-on
-        sequence: !input on_hold_action
-      - conditions:
-          - condition: trigger
-            id: hold-off
-        sequence: !input off_hold_action
-      - conditions:
-          - condition: trigger
-            id: double-click-on
-        sequence: !input on_double_click_action
-      - conditions:
-          - condition: trigger
-            id: double-click-off
-        sequence: !input off_double_click_action
-      - conditions:
-          - condition: trigger
-            id: triple-click-on-off
-        sequence: !input on_triple_click_action
-  - choose:
-      - conditions:
-          - condition: trigger
-            id: click-on-mqtt
-        sequence: !input on_click_action
-      - conditions:
-          - condition: trigger
-            id: click-off-mqtt
-        sequence: !input off_click_action
-      - conditions:
-          - condition: trigger
-            id: hold-on-mqtt
-        sequence: !input on_hold_action
-      - conditions:
-          - condition: trigger
-            id: hold-off-mqtt
-        sequence: !input off_hold_action
-      - conditions:
-          - condition: trigger
-            id: double-click-on-mqtt
-        sequence: !input on_double_click_action
-      - conditions:
-          - condition: trigger
-            id: double-click-off-mqtt
-        sequence: !input off_double_click_action
-      - conditions:
-          - condition: trigger
-            id: triple-click-on-mqtt
-        sequence: !input on_triple_click_action
-      - conditions:
-          - condition: trigger
-            id: triple-click-off-mqtt
-        sequence: !input off_triple_click_action

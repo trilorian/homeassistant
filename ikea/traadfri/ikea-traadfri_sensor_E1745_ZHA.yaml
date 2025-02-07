@@ -1,0 +1,91 @@
+blueprint:
+  name: IKEA Trådfri Sensor
+  description: "## IKEA TRÅDFRI motion sensor (v1.23)
+
+
+    Only for use with [ZHA](https://www.home-assistant.io/integrations/zha/)
+
+
+    Available controls:
+
+    - Motion detected
+
+    - Motion no longer detected
+
+
+    Available settings:
+
+    - Time to wait before performing the motion no longer detected action
+
+
+    Trådfri motion sensor waits for 3 minutes before sending 'no longer detected'.
+
+
+    Can actually be used for any motion sensor.
+    "
+
+  source_url: https://github.com/trilorian/zha/blob/main/ikea/traadfri/ikea-traadfri_sensor_E1745_ZHA.yaml
+  domain: automation
+
+  input:
+    motion_sensor:
+      name: Motion Sensor
+      description: The motion sensor to use.
+      default: ""
+      selector:
+        entity:
+          filter:
+            domain: binary_sensor
+            device_class: motion
+          multiple: false
+    detected_action:
+      name: Motion detected action
+      description: Choose action(s) to run when motion is detected.
+      default: []
+      selector:
+        action: {}
+    not_detected_action:
+      name: Motion no longer detected action
+      description: Choose action(s) to run when motion is no longer detected.
+      default: []
+      selector:
+        action: {}
+    no_motion_wait:
+      name: Wait time
+      description: Time to wait before performing the **motion no longer detected** action
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 240
+          unit_of_measurement: minute
+          step: 1.0
+          mode: slider
+
+# If motion is detected within the delay, restart the script
+mode: restart
+max_exceeded: silent
+
+variables:
+  no_motion_wait: !input no_motion_wait
+
+trigger:
+  platform: state
+  entity_id: !input motion_sensor
+  from: 'off'
+  to: 'on'
+
+action:
+  - alias: "Run the motion detected action"
+    choose: []
+    default: !input detected_action
+  - wait_for_trigger:
+      platform: state
+      entity_id: !input motion_sensor
+      from: "on"
+      to: 'off'
+  - delay:
+      minutes: '{{no_motion_wait}}'
+  - alias: "Run the motion no longer detected action"
+    choose: []
+    default: !input not_detected_action
