@@ -1,7 +1,7 @@
 ---
 blueprint:
   name: IKEA Rodret Dimmer (v2 ZHA + MQTT)
-  description: "## IKEA RODRET Dimmer remote (v2.0)
+  description: "## IKEA RODRET Dimmer remote (v2.1)
 
     For use with [Zigbee Home Automation](https://www.home-assistant.io/integrations/zha/)
     and Zigbee2MQTT [MQTT](https://www.home-assistant.io/integrations/mqtt/) +
@@ -20,7 +20,7 @@ blueprint:
   domain: automation
   input:
     remote_device:
-      name: Remote
+      name: RODRET Remote Control (ZHA)
       description: IKEA Rodret dimmer remote to use.
       default: ""
       selector:
@@ -30,8 +30,13 @@ blueprint:
               manufacturer: IKEA of Sweden
               model: RODRET Dimmer
           multiple: false
+    mqtt_device:
+      name: RODRET Remote Control (MQTT)
+      description: The IKEA E2201 remote
+      selector:
+        device: {}
     base_topic:
-      name: Base mqtt topic
+      name: Base MQTT topic
       description:
         The topic configured in [Z2M addon](https://www.zigbee2mqtt.io/guide/usage/mqtt_topics_and_messages.html).
       default: zigbee2mqtt
@@ -128,7 +133,7 @@ max_exceeded: silent
 trigger_variables:
   zha_remote: !input remote_device
   z2m_base_topic: !input base_topic
-  z2m_controller: !input remote_device
+  z2m_controller: !input mqtt_device
 triggers:
   - trigger: event
     event_type: zha_event
