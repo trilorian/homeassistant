@@ -76,6 +76,9 @@ blueprint:
         Choose action(s) to run when the **off** (Rodret, Trådfri) or **2 dots** (Somrig) button is **clicked twice**. 
 
         **_NB for Rodret, Trådfri only_**: **Double click event (off)** must be exposed and **Double click delay** interval is used as a timeout.
+      default: []
+      selector:
+        action: {}
     on_triple_click_action:
       name: Triple click "on / 1 dot" action
       description: >
